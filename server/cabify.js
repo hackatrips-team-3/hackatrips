@@ -29,7 +29,7 @@ function checkRoute (stops, startAt) {
       }
       resolve(res.body)
       console.log('cabify', res.body, res.statusCode)
-      console.log('eta', res.body[0].vehicle_type.eta)
+      //console.log('eta', res.body[0].vehicle_type.eta)
     })
   })
 }
