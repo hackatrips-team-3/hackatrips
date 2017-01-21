@@ -1,4 +1,4 @@
-module.exports = {checkRoute, makeReservation, cancelTrip}
+module.exports = {checkRoute, makeReservation, cancelTrip, changeTrip}
 
 const config = require ('./config')
 const request = require('request')
@@ -29,6 +29,7 @@ function checkRoute (stops, startAt) {
       }
       resolve(res.body)
       console.log('cabify', res.body, res.statusCode)
+      console.log('eta', res.body[0].vehicle_type.eta)
     })
   })
 }
@@ -67,6 +68,7 @@ function makeReservation (stops, startAt, rider, vehicle_type_id) {
 }
 
 function cancelTrip (idToCancel) {
+  if (!(typeof idToCancel === 'string')) return Promise.reject(new Error('not a string'))
   const options = {
     url: config.cabifyURL + '/journey/' + idToCancel + '/state',
     json: true,
@@ -82,12 +84,22 @@ function cancelTrip (idToCancel) {
     request.post(options, function (err, res) {
       if (err) return reject(err)
       if (res.statusCode !== 200) {
-        console.log(res.body, res.statusCode)
-        console.log(res.body.errors)
+        console.log(res, res.statusCode)
+        if (res.body) console.log(res.body.errors)
         return reject(new Error(res.body.message))
       }
       resolve(res.body)
       console.log('cabify', res.body, res.statusCode)
     })
   })
+}
+
+function changeTrip (idToCancel, stops, startAt, rider, vehicleID) {
+  return cancelTrip(idToCancel)
+    .then(function () {
+      console.log('trip canceled')
+      makeReservation(stops, startAt, rider, vehicleID)
+    })
+
+
 }
