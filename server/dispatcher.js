@@ -1,6 +1,6 @@
-module.exports = {dispatcher}
+module.exports = dispatcher
 
 function dispatcher (session) {
-  console.log('session')
+  console.log(session)
 
 }
