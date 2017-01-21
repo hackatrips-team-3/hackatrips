@@ -2,6 +2,7 @@ const restify = require('restify')
 const builder = require('botbuilder')
 
 const config = require('./config')
+const dispatcher = require('./dispatcher')
 
 const connector = new builder.ChatConnector({
    appId: config.appId,
@@ -10,9 +11,7 @@ const connector = new builder.ChatConnector({
 
 const bot = new builder.UniversalBot(connector)
 
-bot.dialog('/', function (session) {
-  console.log(session.message)
-})
+bot.dialog('/', dispatcher)
 
 const server = restify.createServer()
 server.listen(8080)
