@@ -1,11 +1,18 @@
-var express = require('express')
-var app = express()
+const restify = require('restify')
+const builder = require('botbuilder')
 
-app.get('/', function (req, res) {
-  res.send('Hello World!')
+const config = require('./config')
+
+const connector = new builder.ChatConnector({
+   appId: config.appId,
+  appPassword: config.appPassword
+  })
+
+const bot = new builder.UniversalBot(connector)
+
+bot.dialog('/', function (session) {
+  console.log(session.message)
 })
 
-app.listen(3001, function () {
-  console.log('Example app listening on port 3000!')
-})
-
+const server = restify.createServer().listen(8080)
+server.post('/', connector.listen())
