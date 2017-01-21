@@ -1,4 +1,4 @@
-module.exports = {checkRoute, makeReservation}
+module.exports = {checkRoute, makeReservation, cancelTrip}
 
 const config = require ('./config')
 const request = require('request')
@@ -57,6 +57,32 @@ function makeReservation (stops, startAt, rider, vehicle_type_id) {
     request.post(options, function (err, res) {
       if (err) return reject(err)
       if (res.statusCode !== 200) {
+        console.log(res.body.errors)
+        return reject(new Error(res.body.message))
+      }
+      resolve(res.body)
+      console.log('cabify', res.body, res.statusCode)
+    })
+  })
+}
+
+function cancelTrip (idToCancel) {
+  const options = {
+    url: config.cabifyURL + '/journey/' + idToCancel + '/state',
+    json: true,
+    headers: {
+      Authorization: `Bearer ${config.cabifyToken}`,
+      'Accept-language': 'en'
+    },
+    body: {
+      name: 'rider cancel'
+    }
+  }
+  return new Promise(function (resolve, reject) {
+    request.post(options, function (err, res) {
+      if (err) return reject(err)
+      if (res.statusCode !== 200) {
+        console.log(res.body, res.statusCode)
         console.log(res.body.errors)
         return reject(new Error(res.body.message))
       }
