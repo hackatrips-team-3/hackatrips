@@ -14,5 +14,7 @@ bot.dialog('/', function (session) {
   console.log(session.message)
 })
 
-const server = restify.createServer().listen(8080)
+const server = restify.createServer()
+server.listen(8080)
 server.post('/', connector.listen())
+console.log('listening')
