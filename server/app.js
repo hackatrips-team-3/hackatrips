@@ -5,8 +5,8 @@ const config = require('./config')
 const dispatcher = require('./dispatcher')
 
 const connector = new builder.ChatConnector({
-   appId: config.appId,
-  appPassword: config.appPassword
+   //appId: config.appId,
+  //appPassword: config.appPassword
   })
 
 const bot = new builder.UniversalBot(connector)
