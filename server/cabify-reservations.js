@@ -1,20 +1,22 @@
 const rider = {name: 'John Doe'}
+const reservationStartAt = "2017-01-22 20:50"
 const db = require('./db')
 const cabify = require('./cabify')
 module.exports = {makeReservation}
 
 function makeReservation (userID, originalStop, destination, startAt) {
   const closeTrip = getCloseTrip(originalStop, destination, startAt)
+  console.log('startat', startAt)
   if (!closeTrip) {
     const stops = [originalStop, destination]
     let vehicleID
     let firstPrice
     let tripID
-    return cabify.checkRoute(stops, startAt)
+    return cabify.checkRoute(stops, reservationStartAt)
       .then(function (vehicles) {
         vehicleID = vehicles[1].vehicle_type._id
         firstPrice = vehicles[1].total_price
-        return cabify.makeReservation(stops, startAt, rider, vehicleID)
+        return cabify.makeReservation(stops, reservationStartAt, rider, vehicleID)
       })
       .then(function (idToCancel) {
         tripID = idToCancel._id
@@ -38,12 +40,12 @@ function makeReservation (userID, originalStop, destination, startAt) {
     const stops = oldStops.concat(destination)
     let price
     let tripID
-    return cabify.checkRoute(stops, oldStartAt)
+    return cabify.checkRoute(stops, reservationStartAt)
       .then(function (vehicles) {
        price = vehicles[1].total_price
 
        if (price / (numberOfPeople + 1) < oldPrice || true) {
-         return cabify.changeTrip(oldTripID, stops, startAt, rider, vehicleID)
+         return cabify.changeTrip(oldTripID, stops, reservationStartAt, rider, vehicleID)
        } else {
          console.log('do this')
        }

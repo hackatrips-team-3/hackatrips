@@ -1,6 +1,6 @@
 const restify = require('restify')
 const builder = require('botbuilder')
-
+const _ = require('lodash')
 const config = require('./config')
 const dispatcher = require('./dispatcher')
 const cabifyReservations = require('./cabify-reservations')
@@ -63,19 +63,18 @@ dialog.matches('BookTaxi', [
         var booking = session.dialogData.booking;
         if (results.response) {
         	r = /[0-9]+/
-  			minutes = results.response.match(r)
-  			currentTime = new Date()
-  			bookingTime = currentTime.setMinutes(currentTime.getMinutes() + parseInt(minutes));
+            minutes = results.response.match(r)
+            var currentTime = new Date()
+            var bookingTime = currentTime.setMinutes(currentTime.getMinutes() + parseInt(minutes));
             booking.time = new Date(bookingTime)
             console.log('TIME', booking.time)
         }
 
         if (booking.location && booking.time) {
-           session.send(`Ok! Cab to: ${booking.location}. Be ready at: ${booking.time.getHours()}:${booking.time.getMinutes()}`) 
            const originalStop = {lat: 40.4169473, lng: -3.7057172}
             // TODO geocoding
            let destination
-           const startAt =  "2017-01-22 19:50"
+           const startAt =  booking.time
            const userId = session.message.address.user.id
            geocode.geocode(booking.location)
              .then(function (latlng) {
@@ -86,7 +85,9 @@ dialog.matches('BookTaxi', [
              })
             .then(function (trip) {
                console.log('trip', trip)
-               session.send(`The price will be ${trip.price / 100}.00 €`)
+               session.send(`Ok! Cab to: ${booking.location}. Be ready at: ${trip.startAt.getHours()}:${_.padStart(trip.startAt.getMinutes(), 2, '0')}`)
+               session.send(`The price will be ${trip.price / trip.numberOfPeople / 100}.00 €`)
+               if (trip.numberOfPeople > 1) session.send(`The trip is shared with ${trip.numberOfPeople -1 } more people`)
              })
         }
     }

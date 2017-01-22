@@ -13,6 +13,7 @@
   "dependencies": {
     "botbuilder": "^3.5.3",
     "express": "^4.14.0",
+    "lodash": "^4.17.4",
     "request": "^2.79.0",
     "restify": "^4.3.0"
   },
