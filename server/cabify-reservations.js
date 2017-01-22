@@ -1,6 +1,8 @@
 const rider = {name: 'John Doe'}
 const db = require('./db')
 const cabify = require('./cabify')
+module.exports = {makeReservation}
+
 function makeReservation (userID, originalStop, destination, startAt) {
   const closeTrip = getCloseTrip(originalStop, destination, startAt)
   if (!closeTrip) {
@@ -54,6 +56,7 @@ function makeReservation (userID, originalStop, destination, startAt) {
         closeTrip.numberOfPeople = numberOfPeople + 1
         return closeTrip
       })
+      .catch(e => console.error(e))
   }
 }
 
