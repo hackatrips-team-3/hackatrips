@@ -3,6 +3,7 @@ const builder = require('botbuilder')
 
 const config = require('./config')
 const dispatcher = require('./dispatcher')
+const cabify = require('./cabify')
 
 const connector = new builder.ChatConnector({
    //appId: config.appId,
@@ -65,7 +66,11 @@ dialog.matches('BookTaxi', [
         }
 
         if (booking.location && booking.time) {
-           session.send('Ok! Cab to ' + booking.location + ' ' + booking.time) 
+           session.send('Ok! Cab to ' + booking.location + ' ' + booking.time)
+           const originalStop = {lat: 40.4169473, lng: -3.7057172}
+            // TODO geocoding
+           const destination = {lat: 40.418989, lng: -3.706093}
+           cabify.checkRoute()
         }
     }
 ]);
