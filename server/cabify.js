@@ -53,12 +53,14 @@ function makeReservation (stops, startAt, rider, vehicle_type_id) {
     },
     body: body
   }
+  console.log('reservation options', options)
 
   return new Promise(function (resolve, reject) {
     request.post(options, function (err, res) {
       if (err) return reject(err)
       if (res.statusCode !== 200) {
-        console.log(res.body.errors)
+        console.log('makeReservation err', res.body.errors)
+        console.log(res.body, res.statusCode)
         return reject(new Error(res.body.message))
       }
       resolve(res.body)
@@ -80,6 +82,7 @@ function cancelTrip (idToCancel) {
       name: 'rider cancel'
     }
   }
+  console.log('cancel trip options url', options.url)
   return new Promise(function (resolve, reject) {
     request.post(options, function (err, res) {
       if (err) return reject(err)
@@ -98,7 +101,7 @@ function changeTrip (idToCancel, stops, startAt, rider, vehicleID) {
   return cancelTrip(idToCancel)
     .then(function () {
       console.log('trip canceled')
-      makeReservation(stops, startAt, rider, vehicleID)
+      return makeReservation(stops, startAt, rider, vehicleID)
     })
 
 

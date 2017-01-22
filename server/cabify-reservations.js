@@ -43,12 +43,13 @@ function makeReservation (userID, originalStop, destination, startAt) {
        price = vehicles[1].total_price
 
        if (price / (numberOfPeople + 1) < oldPrice || true) {
-         return cabify.changeTrip(oldTripID, stops, rider, vehicleID)
+         return cabify.changeTrip(oldTripID, stops, startAt, rider, vehicleID)
        } else {
          console.log('do this')
        }
       })
       .then(function (result) {
+        console.log('result from change', result)
         userIDs.push(userID)
         closeTrip.stops = stops
         closeTrip.price = price

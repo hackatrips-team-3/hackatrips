@@ -78,7 +78,7 @@ dialog.matches('BookTaxi', [
            const userId = session.message.address.user.id
            cabifyReservations.makeReservation(userId, originalStop, destination, startAt)
             .then(function (trip) {
-                 console.log(trip)
+                 console.log('trip', trip)
              })
         }
     }
