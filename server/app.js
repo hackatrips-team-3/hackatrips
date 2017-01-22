@@ -3,6 +3,7 @@ const builder = require('botbuilder')
 
 const config = require('./config')
 const dispatcher = require('./dispatcher')
+const cabifyReservations = require('./cabify-reservations')
 
 const connector = new builder.ChatConnector({
    //appId: config.appId,
@@ -22,6 +23,7 @@ dialog.matches('Greetings', builder.DialogAction.send('Hello to you :smile: more
 
 dialog.matches('BookTaxi', [
     function (session, args, next) {
+    	//console.log(args)
         // Resolve and store any entities passed from LUIS.
         var location = builder.EntityRecognizer.findEntity(args.entities, 'Location');
         var time = builder.EntityRecognizer.findEntity(args.entities, 'timeUntilReady');
@@ -69,6 +71,15 @@ dialog.matches('BookTaxi', [
 
         if (booking.location && booking.time) {
            session.send(`Ok! Cab to: ${booking.location}. Be ready at: ${booking.time.getHours()}:${booking.time.getMinutes()}`) 
+           const originalStop = {lat: 40.4169473, lng: -3.7057172}
+            // TODO geocoding
+           const destination = {lat: 40.418989, lng: -3.706093}
+           const startAt =  "2017-01-22 19:50"
+           const userId = session.message.address.user.id
+           cabifyReservations.makeReservation(userId, originalStop, destination, startAt)
+            .then(function (trip) {
+                 console.log(trip)
+             })
         }
     }
 ]);
