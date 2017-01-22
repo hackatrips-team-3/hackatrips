@@ -4,6 +4,7 @@ const builder = require('botbuilder')
 const config = require('./config')
 const dispatcher = require('./dispatcher')
 const cabifyReservations = require('./cabify-reservations')
+const geocode = require('./geocode')
 
 const connector = new builder.ChatConnector({
    //appId: config.appId,
@@ -26,6 +27,7 @@ dialog.matches('BookTaxi', [
     	//console.log(args)
         // Resolve and store any entities passed from LUIS.
         var location = builder.EntityRecognizer.findEntity(args.entities, 'Location');
+        geocode
         var time = builder.EntityRecognizer.findEntity(args.entities, 'timeUntilReady');
         console.log('ENTITIES', location, time)
         var booking = {
@@ -45,7 +47,6 @@ dialog.matches('BookTaxi', [
     	console.log('second block')
     	var booking = session.dialogData.booking
 		if (results.response) {
-			session.beginDialog('/fromPrompt')
 			console.log('RESPONSE', results)
 			booking.location = results.response
         } 
@@ -76,7 +77,12 @@ dialog.matches('BookTaxi', [
            const destination = {lat: 40.418989, lng: -3.706093}
            const startAt =  "2017-01-22 19:50"
            const userId = session.message.address.user.id
-           cabifyReservations.makeReservation(userId, originalStop, destination, startAt)
+           geocode.geocode(booking.location)
+             .then(function (latlng) {
+                 console.log('latlng place', latlng)
+                 return cabifyReservations.makeReservation(userId, originalStop, destination, startAt)
+
+             })
             .then(function (trip) {
                  console.log('trip', trip)
              })
