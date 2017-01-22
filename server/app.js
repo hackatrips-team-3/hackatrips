@@ -22,11 +22,10 @@ dialog.matches('Greetings', builder.DialogAction.send('Hello to you :smile: more
 
 dialog.matches('BookTaxi', [
     function (session, args, next) {
-    	console.log(args)
         // Resolve and store any entities passed from LUIS.
         var location = builder.EntityRecognizer.findEntity(args.entities, 'Location');
         var time = builder.EntityRecognizer.findEntity(args.entities, 'timeUntilReady');
-        console.log(location, time)
+        console.log('ENTITIES', location, time)
         var booking = {
         	time: time ? time.entity : null,
         	location: location ? location.entity : null
@@ -41,7 +40,7 @@ dialog.matches('BookTaxi', [
         }
     },
     function (session, results, next) {
-    	console.log('second block', session)
+    	console.log('second block')
     	var booking = session.dialogData.booking
 		if (results.response) {
 			session.beginDialog('/fromPrompt')
@@ -60,12 +59,16 @@ dialog.matches('BookTaxi', [
     function (session, results) {
         var booking = session.dialogData.booking;
         if (results.response) {
-            booking.time = results.response
+        	r = /[0-9]+/
+  			minutes = results.response.match(r)
+  			currentTime = new Date()
+  			bookingTime = currentTime.setMinutes(currentTime.getMinutes() + parseInt(minutes));
+            booking.time = new Date(bookingTime)
             console.log('TIME', booking.time)
         }
 
         if (booking.location && booking.time) {
-           session.send('Ok! Cab to ' + booking.location + ' ' + booking.time) 
+           session.send(`Ok! Cab to: ${booking.location}. Be ready at: ${booking.time.getHours()}:${booking.time.getMinutes()}`) 
         }
     }
 ]);
