@@ -74,17 +74,19 @@ dialog.matches('BookTaxi', [
            session.send(`Ok! Cab to: ${booking.location}. Be ready at: ${booking.time.getHours()}:${booking.time.getMinutes()}`) 
            const originalStop = {lat: 40.4169473, lng: -3.7057172}
             // TODO geocoding
-           const destination = {lat: 40.418989, lng: -3.706093}
+           let destination
            const startAt =  "2017-01-22 19:50"
            const userId = session.message.address.user.id
            geocode.geocode(booking.location)
              .then(function (latlng) {
-                 console.log('latlng place', latlng)
-                 return cabifyReservations.makeReservation(userId, originalStop, destination, startAt)
+               console.log('latlng place', latlng)
+               destination = latlng
+               return cabifyReservations.makeReservation(userId, originalStop, destination, startAt)
 
              })
             .then(function (trip) {
-                 console.log('trip', trip)
+               console.log('trip', trip)
+               session.send(`The price will be ${trip.price / 100}.00 €`)
              })
         }
     }

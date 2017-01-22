@@ -87,7 +87,7 @@ function cancelTrip (idToCancel) {
     request.post(options, function (err, res) {
       if (err) return reject(err)
       if (res.statusCode !== 200) {
-        console.log(res, res.statusCode)
+        console.log(res.body, res.statusCode)
         if (res.body) console.log(res.body.errors)
         return reject(new Error(res.body.message))
       }
